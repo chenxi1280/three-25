@@ -1,14 +1,20 @@
 <template>
-  <PanoramicPage></PanoramicPage>
+  <div>
+<!--    <HelloWorld msg="hello world" />-->
+    <PanoramicPage></PanoramicPage>
+  </div>
+
 </template>
 
-<script lang="ts">
+<script>
+import  HelloWorld from '../components/HelloWorld.vue'
 import PanoramicPage from "../components/PanoramicPage.vue";
-
 export default {
   components: {PanoramicPage}
 }
+
 </script>
 
-<style lang="scss" scoped>
+<style scoped>
+
 </style>

@@ -1,21 +1,15 @@
-import { createRouter, createWebHashHistory } from "vue-router"
-import Home from "../views/Home.vue"
-
-// 解决路由重定向报冗余错误的问题
-// const originalPush = VueRouter.prototype.push
-// VueRouter.prototype.push = function push (location) {
-//     return originalPush.call(this, location)
-// }
-// Vue.use(VueRouter)
-
+import {createRouter, createWebHashHistory} from "vue-router";
+import Home from "@/views/Home.vue"
 const routes = [
     {
-        path:'/',
+        path: '/',
         component:Home
-    }
+    },
 ]
-
-export const router = createRouter({
+const router = createRouter({
+    // 4. 内部提供了 history 模式的实现。为了简单起见，我们在这里使用 hash 模式。
     history: createWebHashHistory(),
-    routes: routes
+    routes, // `routes: routes` 的缩写
 })
+
+export default router
