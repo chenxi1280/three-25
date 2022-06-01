@@ -5,18 +5,25 @@
     <div class="demo-image__lazy">
 <!--      <el-image v-for="url in urls" :key="url" :src="url" lazy />-->
 <!--      <img class="demo-image__lazy_img" :src="url" v-for="url in urls" :key="url">-->
-      <div style="width: 225px;height: 100%; margin: 0px 2px " v-for="url in urls" :key="url">
-        <img style="width: 225px;height:94%" :src="url" />
+      <div style="width: 100Px;height: 96Px; margin: 0Px 2Px " v-for="(url,index) in urls" :key="index"
+           :style="{background: `url(${url}) no-repeat center`, backgroundSize: '150%',
+           borderColor: index === imgShowIndex ? '#f6b64c' : 'rgba(0,0,0,0)', borderWidth:  index === imgShowIndex ?'2Px':'2PX',borderStyle: 'solid'}"
+           @click="changeScene(index)"
+      >
+<!--        {{index}} {{imgShowIndex}}-->
+<!--        <img style="width: 100Px;height:94%" :src="url" />-->
       </div>
     </div>
     </transition>
   </div>
-  <el-icon v-if="showFlag" @click="showFlag = false"   style="left:48%;bottom: 25.5%;position: absolute;" :size="40"><ArrowDownBold /></el-icon>
+  <el-icon v-if="showFlag"  @click="showFlag = false"  style="left:48%;bottom: 120PX;position: absolute;" :size="40"><ArrowDownBold /></el-icon>
   <el-icon v-if="!showFlag" @click="showFlag = true"   style="left:48%;bottom: 0.5%;position: absolute;" :size="40"><ArrowUpBold /></el-icon>
 
 </template>
 
 <script>
+import {reactive , ref} from "vue";
+
 export default {
   name: "SceneSwitcher",
   setup() {
@@ -29,20 +36,32 @@ export default {
       'https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg',
       'https://fuss10.elemecdn.com/2/11/6535bcfb26e4c79b48ddde44f4b6fjpeg.jpeg',
     ]
-    // const showFlag = false
-    return { urls }
+    let showFlag = ref(true)
+    let imgShowIndex = ref(0)
+
+
+    return { urls,showFlag,imgShowIndex }
   },
   data() {
     return {
-      showFlag:false
+      // showFlag:false
     }
   },
   created() {
-    console.log(window.innerWidth)
-    let element = document.querySelector('#app');
-    console.log(element)
-    const app = document.querySelector('#app')
-    app.style.overflow = 'hidden'
+    // console.log(window.innerWidth)
+    // let element = document.querySelector('#app');
+    // console.log(element)
+    // const app = document.querySelector('#app')
+    // app.style.overflow = 'hidden'
+
+  },
+  methods:{
+    changeScene(index) {
+      this.imgShowIndex = index
+      console.log('切換 场景')
+      this.$parent.changeScene(index)
+    }
+
   }
 
 }
@@ -51,14 +70,16 @@ export default {
 <style scoped lang="scss">
 .switch-main-div {
   animation: test 0.6s linear;
-  width: 96%;
-  height: 25%;
-  bottom: 2px;
-  left: 2%;
+  width: 100%;
+  height: 100PX;
+  bottom: 10Px;
+  //left: 2%;
   background: rgba(175,175,175,0.3);
   position: absolute;
   opacity: 1;
   z-index: 10;
+  display:flex ;
+  justify-content: center;
 }
 
 @keyframes test {
@@ -72,14 +93,16 @@ export default {
 
 .switch-main-div-hide {
   animation: test-hide 0.6s linear;
-  width: 96%;
-  height: 25%;
+  width: 100%;
+  height: 100PX;
   bottom: 2px;
-  left: 2%;
+  //left: 2%;
   background: rgba(175,175,175,0.3);
   position: absolute;
   opacity: 0;
   z-index: -10;
+  display:flex ;
+  justify-content: center;
 }
 
 .demo-image__lazy {
