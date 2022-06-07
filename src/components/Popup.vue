@@ -21,16 +21,25 @@
         />
       </div>
 
-      <span class="el-image-viewer__btn el-image-viewer__close" @click="closePopup">
+      <span class="el-image-viewer__btn el-image-viewer__close" @click="closePopup" v-if="type !== 1">
         <i class="el-icon"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
           <path fill="currentColor" d="M764.288 214.592 512 466.88 259.712 214.592a31.936 31.936 0 0 0-45.12 45.12L466.752 512 214.528 764.224a31.936 31.936 0 1 0 45.12 45.184L512 557.184l252.288 252.288a31.936 31.936 0 0 0 45.12-45.12L557.12 512.064l252.288-252.352a31.936 31.936 0 1 0-45.12-45.184z">
           </path>
         </svg>
         </i>
       </span>
+
       <div style="position: absolute;top: 50%; left: 50%;margin: -20% 0% 0% -22.5%;"  v-show="videoShowFlag" >
         <video src="../../public/video/2_4.mp4" controls style="width: 80%;height: 45%;"  ></video>
       </div>
+
+      <div style="position: absolute;top: 50%; left: 50%;margin: -20% 0% 0% -22.5%;"  v-show="type === -1" >
+        <div style="width: 80%;height: 45%;font-size: 16px">
+          &nbsp; &nbsp;  这是一段简介。这是一段简介， 这是一段简介。这是一段简介， 这是一段简介。这是一段简介， 这是一段简介。这是一段简介， 这是一段简介。
+          这是一段简介， 这是一段简介。这是一段简介， 这是一段简介。这是一段简介， 这是一段简介。这是一段简介， 这是一段简介。这是一段简介，
+        </div>
+      </div>
+
     </div>
 
   </div>
@@ -75,6 +84,8 @@ export default {
       this.isShow()
     }else if (this.type === 2 ) {
       this.videoShowFlag = true
+    }else if (this.type === -1 ) {
+
     }
     setTimeout( () => {
 

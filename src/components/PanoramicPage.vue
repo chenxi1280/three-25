@@ -3,15 +3,34 @@
     <!--    <el-button style="position:absolute; right: 2px" type="success" plain size="mini" @click="returnMap">返回</el-button>-->
     <div class="RightBtnContainer_container">
       <div>
-
+        <div class="RightBtnContainer-div" @click="openSummary(-1)">
+          <img style=" padding-top: 5px;padding-left: 5px;width: 30px; height: 30px;  cursor: pointer; display: block;"
+               src="../../public/icon/信息.png">
+        </div>
+        <div class="RightBtnContainer-div" @click="musicChange">
+          <img style=" padding-top: 5px;padding-left: 5px;width: 30px; height: 30px;  cursor: pointer; display: block;"
+               src="../../public/icon/music.png">
+        </div>
+        <div class="RightBtnContainer-div" @click="openSummary(-2)">
+          <img style=" padding-top: 5px;padding-left: 5px;width: 30px; height: 30px;  cursor: pointer; display: block;"
+               src="../../public/icon/分享.png">
+        </div>
+        <div class="RightBtnContainer-div" @click="likeChange">
+          <img style=" padding-top: 5px;padding-left: 5px;width: 30px; height: 30px;  cursor: pointer; display: block;"
+               :src=" likeUrl ">
+        </div>
+        <div  class="RightBtnContainer-div" @click="openSpeakModal">
+          <img style=" padding-top: 5px;padding-left: 5px;width: 30px; height: 30px;  cursor: pointer; display: block;"
+               src="../../public/icon/评论.png">
+        </div>
       </div>
     </div>
     <div style="position: absolute;right: 60px;   bottom: 70%;">
       <div class="sandTableBox">
-        <img draggable="false" src="../../public/img/map.jpg" style="width: 200px; height: 200px;">
+        <img draggable="false" src="../../public/img/map.png" style="width: 414px; height:179px;">
         <div v-for="(v,i) in mapDotList" :key="i + 100"
              :style="{width: v.selectFlag?  '18.4px' : '12px', height: v.selectFlag?  '18.4px' : '12px'
-             , top: v.selectFlag? '88.7167px' : ' 70.6667px' , left:v.selectFlag? '94.9667px': '113.167px',
+             , top: v.selectFlag? '119.8px' : ' 70.6667px' , left:v.selectFlag? '37.8px': '113.167px',
              zIndex: '3', position: 'absolute', cursor: 'auto'}">
           <div style="position: relative;">
 
@@ -21,31 +40,9 @@
             </div>
           </div>
         </div>
-
-        <!--        <div-->
-        <!--            style="width: 18.4px; height: 18.4px; position: absolute; top: 88.7167px; left: 94.9667px; z-index: 3; cursor: auto;">-->
-        <!--          <div style="position: relative;">-->
-        <!--            <div class="Tip_tip_3te0xM" style="visibility: hidden;">-->
-        <!--              <p>东澳岛02</p>-->
-        <!--            </div>-->
-        <!--            <div>-->
-        <!--              <div style="width: 18.4px; height: 18.4px; border-radius: 18.4px; background: rgb(245, 40, 43);"></div>-->
-        <!--            </div>-->
-        <!--          </div>-->
-        <!--        </div>-->
-        <!--        -->
-        <!--        -->
-        <!--        <div-->
-        <!--            style="width: 12px; height: 12px; position: absolute; top: 70.6667px; left: 113.167px; z-index: 2; cursor: pointer;">-->
-        <!--          <div style="position: relative;">-->
-        <!--            <div class="Tip_tip_3te0xM" style="visibility: hidden;">-->
-        <!--              <p>东澳岛01</p>-->
-        <!--            </div>-->
-        <!--            <div>-->
-        <!--              <div style="width: 12px; height: 12px; border-radius: 12px; background: rgb(40, 110, 250);"></div>-->
-        <!--            </div>-->
-        <!--          </div>-->
-        <!--        </div>-->
+<!--        -->
+<!--        top: 33.9167px;  88.71  54.8 -->
+<!--        left: 40.1667px;  94.96 54.8-->
 
         <div class="compassR" :style="transformObj" @click="clickRotateComPass">
           <div
@@ -57,7 +54,6 @@
         </div>
       </div>
     </div>
-
 
     <div class="main_vr">
       <div class="vr_container" id="vr_container"></div>
@@ -71,6 +67,33 @@
     <SceneSwitcher></SceneSwitcher>
     <Popup v-if="popShowInfo.showFlag" :type="popShowInfo.type"></Popup>
     <!--    <div class="RightBtnContainer_container_2TnlAa"><div><em class="Button_btn_3I1HLL" style="display: block;"><i class="icon_icon_2qVimu" style="background-size: 900px 1009px; background-position: -65px -589px; width: 62px; height: 62px;"></i></em><div><em class="Button_btn_3I1HLL" style="display: block;"><i class="icon_icon_2qVimu" style="background-size: 900px 1009px; background-position: -130px -660px; width: 62px; height: 62px;"></i></em></div><em class="Button_btn_3I1HLL" id="vr_btn" style="display: block;"><i class="icon_icon_2qVimu" style="background-size: 900px 1009px; background-position: 0px -590px; width: 62px; height: 62px;"></i></em><em class="Button_btn_3I1HLL" style="display: block;"><i class="icon_icon_2qVimu" style="background-size: 900px 1009px; background-position: -401px -590px; width: 62px; height: 62px;"></i></em><img class="Image_image_H8TT1o" src="data:image/png;base64,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"></div></div>-->
+
+    <div class="SpeakModal_modal" v-if="speakModalShowFlag">
+      <div class="SpeakModal_heade">
+        <img
+          src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACIAAAAgCAQAAADdhmJCAAABxElEQVR4AZ3UA5AYWRQAwHe2bdu2bdu2C2fbthnbtpOLbdtrdLjmTBe+jajIOg5zrx/1NMos2TLNMFwXX7jFvlEzO3nBJEXyLTDBZIsVKjLYI7aIqtjER3KRp5UXnG+7KGZdu7jCG7qDZZ62blTkJGMxxwt2iWo40Acy0NN+UZbTLcdvto1asI+2mF6mG8dbqtD9kYCPMMXuRcn1jcBDkZDP0LQo8RwaRWLWNwyXronOl2HPSMEZ6BMRzkedSMkQhXYP3+CGSMmreDx0x/aRkjPwYxgvJ1KzH5qHDFMiNZtiQMg0NVKzMfqEmTIjNbuhSeiBXSIlF+P78DlujpS8hQfCBagfqVjHRAV2CuuZLt9+kYLL0T1W8TDaWyfF8U7COUWvsRveiESs60/UiyK2MRJvWzfBN/AvxtgpStjLTHRyTNSCE/XERLtHWXbXEIXqOyqq4Vj/KEQLu0ZlXGYSWkQxG1rXBra2lzPd50fjwHS3R9XcgA+KUg61WFk5WrjSelEdX+G2WM3hpmKsgTpq6EdPOMlGtTm2sfLtFGFjT8jAh5GU29HX1T42CxmejKRsYZIimf61byTnFSP1Us9n7rRFJLACwPLhx90RQfYAAAAASUVORK5CYII="
+          class="SpeakModal_iconSpeak_2JsKCz"><span class="SpeakModal_title_3F8SPT">评论</span></div>
+
+<!--        <textarea class="SpeakModal_textarea" type="text" placeholder="评论内容可联系作者本人进行删除"></textarea>-->
+        <el-input
+
+            v-model="form.desc"
+            :rows="5"
+            type="textarea"
+            placeholder="评论内容审核后会出现在弹幕区！"
+        />
+        <div style="margin-top: 10px">
+          <el-button  type="primary" @click="onSubmit">Create</el-button>
+          <el-button @click="speakModalShowFlag = false">Cancel</el-button>
+        </div>
+
+
+<!--      <a-->
+<!--        href="javascript: void 0;" class="Button_button_1a3a6c Button_disabled_1RmQ7C SpeakModal_submitBtn_1c1I2h"-->
+<!--        style="width: 100px; height: 35px; padding-left: 0px; padding-right: 0px; line-height: 33px; color: rgb(255, 255, 255); border-color: rgb(0, 163, 216); background-color: rgb(0, 163, 216);">发-->
+<!--      表</a><a href="javascript: void 0;" class="Button_button_1a3a6c SpeakModal_cancelBtn_28KdnE"-->
+<!--              style="width: 70px; height: 35px; padding-left: 0px; padding-right: 0px; line-height: 33px; color: rgb(221, 221, 221); border-color: rgb(221, 221, 221); background-color: transparent;">取消</a>-->
+    </div>
   </div>
 </template>
 
@@ -108,6 +131,8 @@ export default {
   },
   data() {
     return {
+      speakModalShowFlag:false,
+      likeUrl:'../../public/icon/like.png',
       mapDotList: [{selectFlag: true}, {selectFlag: false}],
       transformObj: 'transform: rotate(0deg)',
       // popShowFlag: false,
@@ -167,7 +192,16 @@ export default {
           },
           childs: []
         }]
-      }
+      },
+      venueList: [
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+
+      ]
     }
   },
   watch: {
@@ -185,7 +219,14 @@ export default {
     })
     const popupRef = ref()
 
-    return {popShowInfo, popupRef}
+
+    const form = reactive({
+      desc: '',
+    })
+
+
+
+    return {popShowInfo, popupRef,form}
   },
   created() {
     setTimeout(() => {
@@ -393,6 +434,7 @@ export default {
       this.optionsTreeAll.childs.forEach((v, i) => {
         this.initLoadOption(v, i)
       })
+
       console.log(annies)
     },
     initLoadMesh() {
@@ -438,8 +480,38 @@ export default {
       scene.add(mesh)
       mesh.position.set(0, 0, 0)
     },
-    changeScene(index) {
+    openSummary(i){
+      console.log(11,  this.popShowInfo)
+      this.popShowInfo.showFlag = true
+      this.popShowInfo.type = i
+
+    },
+    openSpeakModal(){
+      this.speakModalShowFlag = true
+      this.form.desc = ''
+    },
+    likeChange(){
+      this.likeUrl = '../../public/icon/like1.png'
+    },
+    musicChange(){
+      console.log()
+    },
+    openCommentPop(){
+
+    },
+    onSubmit(){
+      console.log(this.form.desc)
+    },
+    // 全景场景切换
+    venueChange(index) {
       console.log(index)
+      // 重新调用
+      // this.optionsTreeAll = this.venueList[index]
+      // this.initLoadOptions()
+    },
+    // 全景图切换
+    changeScene(index) {
+      console.log()
       texture = new THREE.TextureLoader().load('../../public/img/backGround' + index + '.jpg')
       mesh.material.map = texture
       console.log(mesh)
@@ -605,8 +677,8 @@ export default {
     width: 128px;
     height: 128px;
     position: absolute;
-    top: 33.9167px;
-    left: 40.1667px;
+    top: 65px;
+    left: -17px;
     display: block;
 
     //width: 60px;
@@ -632,7 +704,7 @@ export default {
 }
 
 .sandTableBox {
-  width: 200px;
+  width: 414px;
   position: relative;
   overflow: hidden;
 
@@ -665,6 +737,53 @@ export default {
     height: 31px;
     margin-bottom: 14px;
     cursor: pointer;
+  }
+  .RightBtnContainer-div{
+    background-color: rgba(175,175,175,0.3);
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    margin-top: 20px
+  }
+}
+
+
+.SpeakModal_modal{
+  bottom: 180px;
+  left: 50%;
+  margin-right: -50%;
+  transform: translateX(-50%);
+  position: absolute;
+  z-index: 4300;
+  width: 400px;
+  height: 179px;
+  padding: 12px 15px;
+  background-color: rgba(51,51,51,.7);
+  color: #fff;
+  .SpeakModal_heade{
+    margin-bottom: 10px;
+    font-size: 16px;
+
+    .SpeakModal_title{
+      display: inline-block;
+      margin-right: 5px;
+    }
+  }
+  .SpeakModal_textarea{
+    width: 100%;
+    height: 80px;
+    padding: 10px;
+    line-height: 20px;
+    border: 1px solid #eee;
+    background-color: #f7f7f7;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+  }
+  .SpeakModal_actions{
+    bottom: 20px;
+    left: 15px;
+    position: absolute;
+    margin-left: -30px;
   }
 }
 
