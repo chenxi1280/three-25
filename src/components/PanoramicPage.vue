@@ -66,6 +66,7 @@
     </div>
     <SceneSwitcher></SceneSwitcher>
     <Popup v-if="popShowInfo.showFlag" :type="popShowInfo.type"></Popup>
+    <BlindBoxPop v-if="blindBoxPopShowInfo.showFlag" ></BlindBoxPop>
     <!--    <div class="RightBtnContainer_container_2TnlAa"><div><em class="Button_btn_3I1HLL" style="display: block;"><i class="icon_icon_2qVimu" style="background-size: 900px 1009px; background-position: -65px -589px; width: 62px; height: 62px;"></i></em><div><em class="Button_btn_3I1HLL" style="display: block;"><i class="icon_icon_2qVimu" style="background-size: 900px 1009px; background-position: -130px -660px; width: 62px; height: 62px;"></i></em></div><em class="Button_btn_3I1HLL" id="vr_btn" style="display: block;"><i class="icon_icon_2qVimu" style="background-size: 900px 1009px; background-position: 0px -590px; width: 62px; height: 62px;"></i></em><em class="Button_btn_3I1HLL" style="display: block;"><i class="icon_icon_2qVimu" style="background-size: 900px 1009px; background-position: -401px -590px; width: 62px; height: 62px;"></i></em><img class="Image_image_H8TT1o" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAD4AAAA+CAYAAABzwahEAAAMgElEQVRoQ+Vbe3BU1Rnfc+5jHyYGUaqEgCwxBAiyJJCClqQWTZqQoXm0zKAltsIkAUoXGCFVYiAFa5QqLRmaBouGIWCdhiSCRcAiqQmoGLIhqTgGUlIUo2IxQB6793HO6XzrXRpCNnt3N6gzuTP7x+6ex/c733d+3+Ociww38VmwYIHY3t5uNRgM41RVDWeMjTUYDCMYYxaEkBmmZow5EUK9BoPhMkLoE57nOwwGw8dWq7W9srJSvlnioaEeeMaMGWGMsfsIITMZY1GMMRzIHAghihA6y3HcSYTQu42NjVcCGcdbnyEBXlRUhPft23cvY2weIWSKZzKEECOEXGWMdVFKnYQQ0KzEGCPwgXYIIQ4+BoPByHGcBWNsRgiFchx3K2Psmnwcx32IEHojPT39X0VFRTTYRQgKOAA+cODADEVRfkYICdeAEErpfxVF+VJRlCuguUCEBEsRBCFMEIRRGOM7GGOwOAaO4zoEQdiblpbWGMwCBAw8NjY2nBCSyxiL1IA5FUW5IMvyxUDBelsgWARRFL8nCEKEwWBwcwNC6N8cx73Y1NQEnOD34zdw0HJNTU06pTRLE0BSFKVdluUv/Z49gA6iKI4SBMHKGDNCd4xxdWZm5j5/te8X8NTUVGNHR8dySmkc7F9VVT9xuVyfDLWGfa0HWIDJZBrL8/xY4AGMsSM8PLz04MGDkq++1/hHb8M5c+bc1tXVlU8pBXOTJUn6kBDSpbf/zWjHcVyo0WgEMhUxxhdCQ0M3Hzt2rFPPXLo0HhcXdw8hZA2l9BbGWDeAppTqXl09ggTaBmNsBPAIoRCMcQ/Hcc87HI42X+P5BA6gVVUtBPOilH7pdDrPfNOm7QsEyGY2mydijEeBbDzPb/IFflDgmnkXg6YJIRckSWr3JcS3+b/RaLRyHBcBmg8NDX1yMLP3ClwjsiLY06Bpl8v10bcJSu/cJpNpEmge9nx4eHiRN8IbELjmslYCe8Oe7u3tbf6umfdgPt9isdi0Pe/IzMzcOpCrGxC4zWbL1Py07HK5Tn1XiEyv1oHwTCbTdI3tq5ubm2v6970BOERkqqo+B37a5XI1D6XLIuTr8NwHAMZx7ug0qAdcnclksoGf53n+N/0jvOuEABOvrq5eD2EoIeRjSZLOBzV7n86EEMQY4xljgqqqwgALAGysIITgQziOY8HObTQa7+Y4bhyEt1lZWRv7mvx1wOPj4+NdLpcdISR1d3dDOhhQgtFfYE3THGMspKSkZP7tt98+sm/m5TYDhOjJkydbt2zZcgxj7OI4Lui5wc2FhIRAegymX9LQ0NBwQ+QG2n7ttdeKIctSVfWjoYy9NW0L8+bNu7e0tDTXmyYlSZInTJiwQRTFKxzHufdFsA/E9jzPT4KsLiMj40mP1q9pPDY21qaq6hqDweDs7e09GeyEffsDcEqpMSMjI27r1q2/gP96enqk3t5ed/Q3YsQIiyAIvKqq6rhx44pEUezkeV4dKhksFstMyOp4nn++qamp+TqimT59+pNQRFAU5ayiKJ8P1aQwjgbclJ6eHldSUvIo/LZz58738vPzaymlXF1d3aIpU6aApakRERG/NZlMXw0lcEEQ7hIEIQqKGadOnSq+BhzKRbIsbwNS6e7ufm+o9rZn8QYCvmfPnvq1a9ceJITwb7/9du6kSZMibhZwba/PhmKGKIoroIzlNvW4uLgURVF+zhj7AmJxf7Wtw02BqXs0ng3jv/LKK3Vr1649AEx/9OjRZR7gY8aM2Wg2m79CCPkydb/cHsTyCKE7BUHY43A4DrmB22y2pyil0bIsf6Cqqq60rq82YSW10hCMN6CfVlXVmJ6ebistLX3EB/BiQRAuD0JuTCtEAvlRvW6P5/nbRFGcijFubW5ufhpBCbi1tfUvIHB3d/c7/pi5h62NRmNoUlLSBIQQ+OeBHqSqKh8TExOxYsWKRG/ACSEkLy+vWhRFyRtwCKyuXr3ac+TIkXM8z7vAMvQEPJq53w8V7ejo6Bw0c+bMaEmSQONXXC5Xiz9mTgjBiqLcsn///iVxcXGT/emrmfrfwdRra2uXRUdHQ81d91NWVra/uLj4qObzdQU7JpNpGsY4zGg0Pg3AkyRJejSQtJMQwsmyfGtdXZ09MjLSXWXV+1RWVr61evXqN2CL1NbW/mrixIl36+0L7aqqqo6vXLmyWhAEKD7oAu5JW41G4y5ks9keo5TODcSNAXBJkkbU19f/OjIycrQkSeqqVav2aabqLfJiGGNy5syZjpaWls/ABJOTkyPDwsLCKKVw+DAgRyiKwkdFRYXb7Xb3Vtm7d+87q1at8gDXFeV53BrG+CgAdxMbJCSU0qv+rHp/4E6nUx4/fvxzgiBA5DUYK8MpCdH4BGJ4IEevoGExVFUVk5KSYnbu3OmOAwIBjjG+FRIXIDgA/jyl9E6Xy/W+v+mnF+DFJpMJzsF8uSPdawxxPSEEgE8tLy//ZRDAIWb/Psb4CzRt2rRSxlio0+l8lzHml7D9gbtcLtlms22HfQca1Y3Md0OIA4SEhIR7ysrKMgMFjhDizWbzfQihLtB4OaWU7+3tPQZU71uG/7fQyC1MI7fR/vQNtq1GbjWCIHTrJTfYMhaLZQ7GWB0K4Le8+eaby2JiYiYEC8af/rt37/5HQUHBGxhjZ0DAgzR1MEFx6tSp1kWLFt3/8MMPzwLhL1682NXW1va5P8HQYKAhkYmPjx8viiLf1dXlKi8vr3v55ZePX758+RIULvQEMDB+f1MPhtxgPPDlIQsXLox/4YUXFsAPFRUV765Zs+Ywz/OQdupyNYMAhyAppL6+/rHo6Gg4qCRWq3UzQugLf4IXGF+rxX1NbsG4MxjME70VFxfPz87O/iH8tm7dur/t2rXrhBZSMq3a4rkgAK5sQC4ZqB24OYgOX3rppYUpKSmxMH52dvaOurq6DwIAfp07CziA0YCDxkOrq6sXz5o1Kxp+S0xM3HL+/Pn/YIzhKgecwIiQpAB5wmJgjME8r1kCxPxaOyP46z7t3FdBFEWx5OfnP2i329Pge0lJyYHNmze/JQhCrx/729AnLz8SVMgKQkDyIcvyiMbGxjWjR4+Gg0VnVFTUM1BMAJcGoLOzs2MLCwsfoZSyjIyMP7S2tl7om1x4KjSPP/54Ql5e3nxVVcns2bOf6e7u/gq2ClRvEhMTYyoqKtxlq8OHDzctXrz4r6IoAqPrdpvXhaxBJilweUeEQ/vW1tYChBA+ffr0+eTk5DKom2lCm5YtW5bwxBNP/BSEzsrKKnE4HGc1UnKbPAAHrW7YsCElJycnGX6LjY39XWdn52ewQFp1dtS5c+ee4jiOO3v27KcPPPDANn9rc9clKcGmpVBgSElJsW3fvv0xEPj1119/f+nSpZWgDTBZSqk5Nzc3saCgwB14ZGZmbnM4HGdgG3jMVOMJy/r161Nzc3Mf0oAXd3Z2diCEZAAuy3LYiRMnVo8dO3YUhMZWq3WTyWSC2pyixw3ekJZCp0ALER6B161b9+Ply5e7NfXss8/u37Zt2z8FQXDCd1iYvsAzMjL+1NTU1Krtf4/MQGBmL8ABGAYeefXVVx9NSEiIgU7z588vaWlpacMYQ+7uE/sNhQjoEWjpSYvcQioqKhbNnTt3mqbRFxsaGs5wHOcmJlVVzUuXLv1BYWHhT+B7enr6nxsbG+H+iuxhd9CGqqqg8Yfy8vIe1JTx+0uXLn2mJTuQpFiKioqSc3JyfgT/b9q0qXrHjh31egOYAUtPgRYbPbH68ePH7Var9S4gpeTk5F0Y4y5P8AKnJpmZmVPtdrvb1UGFpa2t7VNITT1qAjcG7ZYsWRKfnZ0dry3Q7p6eHiBIN/vD/wkJCVEbN250W1ZVVdV7dru9SiO4QWMFr8VGGCiQ8jIwuqqqI9vb29cLguCt7OTTDANp0NLSci41NXW7KIpXfZ26eC0va2Ti94ECAB85cuQdjY2NG4DRAwEQaJ/29vYLCQkJf9QqMINqfNADhUCOkIDcwMempaVNmjx58phAr28GAF49dOjQR6dPn4Ytc807DDSOzyMk6OTvoWGfiIuHmF37HgAO/7qAaWsVHKiwetW2rkNDmDrQY2LtQME/6YNsrceF6T4m1vb6TbsYECRWv7r7dTHAM/KwvAriMfmamprhd/kHwA/L614ekx+WF/w84Ifllc6+4IfdJd5+Zj+8rm17wA/Li/oe8MPy1Yy+odOwexmnL/hh+fpV/wUYVi/cDZQ1DKtXLL2lTX1fqlUUBd5eGjPYS7UGg+FTQRAufBMv1f4PV8vgwlOcwZEAAAAASUVORK5CYII="></div></div>-->
 
     <div class="SpeakModal_modal" v-if="speakModalShowFlag">
@@ -104,6 +105,7 @@ import Stats from 'three/examples/jsm/libs/stats.module.js';
 import SceneSwitcher from "./SceneSwitcher.vue";
 import Popup from "./Popup.vue";
 import {ref, reactive} from "vue"
+import BlindBoxPop from "./BlindBoxPop.vue";
 
 // import Stats from './stats.min.js'
 // import { OrbitControls } from './OrbitControls.js'
@@ -114,7 +116,7 @@ var clock = new THREE.Clock();
 // var spriteTL, spriteTR, spriteBL, spriteBR, spriteC, sceneOrtho, cameraOrtho
 export default {
   name: 'PanoramicPage',
-  components: {Popup, SceneSwitcher},
+  components: {BlindBoxPop, Popup, SceneSwitcher},
   props: {
     showZIndex: {
       type: Number,
@@ -217,6 +219,11 @@ export default {
       showFlag: false,
       type: 1
     })
+
+    let blindBoxPopShowInfo = reactive({
+      showFlag: true,
+      type: 1
+    })
     const popupRef = ref()
 
 
@@ -226,7 +233,7 @@ export default {
 
 
 
-    return {popShowInfo, popupRef,form}
+    return {popShowInfo, popupRef,form ,blindBoxPopShowInfo}
   },
   created() {
     setTimeout(() => {
@@ -356,7 +363,7 @@ export default {
         if (this.showType === 1) {
           this.video.play()
         }
-        this.animate()
+        // this.animate()
 
       }, 50)
 
@@ -480,6 +487,7 @@ export default {
       scene.add(mesh)
       mesh.position.set(0, 0, 0)
     },
+
     openSummary(i){
       console.log(11,  this.popShowInfo)
       this.popShowInfo.showFlag = true
@@ -660,7 +668,13 @@ export default {
     },
     closePopup() {
       this.popShowInfo.showFlag = false
-    }
+    },
+    openBlindBoxPopShowInfo(){
+      this.blindBoxPopShowInfo.showFlag = true
+    },
+    closeBlindBoxPopShowInfo() {
+      this.blindBoxPopShowInfo.showFlag = false
+    },
   }
 }
 </script>
