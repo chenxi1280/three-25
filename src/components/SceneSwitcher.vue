@@ -125,6 +125,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
+
 .switch-main-div {
   animation: test 0.6s linear;
   width: 100%;

@@ -16,6 +16,7 @@
     "three": "^0.140.2",
     "unplugin-element-plus": "^0.4.0",
     "vue": "^3.2.25",
+    "vue-baberrage": "^3.2.4",
     "vue-router": "^4.0.6",
     "vuex": "^4.0.2"
   },
