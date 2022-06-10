@@ -365,7 +365,7 @@ export default {
         if (this.showType === 1) {
           this.video.play()
         }
-        // this.animate()
+        this.animate()
 
       }, 50)
 
