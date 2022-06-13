@@ -243,7 +243,7 @@ export default {
     }, 1000)
     textureLoader = new THREE.TextureLoader()
 
-    textureLoader.load('../../public/img//backGround2.jpg', (texture) => {
+    textureLoader.load('../../public/img/backGround2.jpg', (texture) => {
       texture.mapping = THREE.UVMapping
 
       this.init(texture)
@@ -283,9 +283,12 @@ export default {
       raycaster = new THREE.Raycaster()
       raycaster.far = 5500
 
-      renderer = new THREE.WebGLRenderer({antialias: true, alpha: true})
-      renderer.setPixelRatio(window.devicePixelRatio)
-      renderer.setSize(window.innerWidth, window.innerHeight)
+      // renderer = new THREE.WebGLRenderer({antialias: true, alpha : true});
+      renderer = new THREE.WebGLRenderer();
+      renderer.setPixelRatio(window.devicePixelRatio);
+      renderer.setSize(window.innerWidth, window.innerHeight);
+
+      // renderer.setClearAlpha(0);
       // renderer.shadowMap.enabled = true
       // renderer.autoClear = false; // To allow render overlay on top of sprited sphere
       // renderer.outputEncoding = THREE.sRGBEncoding
@@ -294,9 +297,9 @@ export default {
       // renderer.physicallyCorrectLights = true;
 
       // container.appendChild( renderer.domElement );
+      console.log(texture)
 
-
-      container = document.querySelector('#vr_container')
+      container = document.querySelector('.vr_container')
       container.appendChild(renderer.domElement)
 
       console.log(11)
@@ -305,42 +308,53 @@ export default {
       container.appendChild(stats.dom);
       // 创建相机
 
-      camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 1000)
-      camera.target = new THREE.Vector3(0, 0, 0);
+      camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 100000)
+      // camera.target = new THREE.Vector3(0, 0, 0);
       camera.position.set(0, 0, 0)
 
       // 创建场景
 
-      // var options = {
-      //   generateMipmaps: true,
-      //   minFilter: THREE.LinearMipmapLinearFilter,
-      //   magFilter: THREE.LinearFilter
-      // }
+      var options = {
+        generateMipmaps: true,
+        minFilter: THREE.LinearMipmapLinearFilter,
+        magFilter: THREE.LinearFilter
+      };
 
       scene = new THREE.Scene()
-      scene.background = new THREE.Color(0x222222);
-      // scene.background = new THREE.WebGLCubeRenderTarget(1024, options).fromEquirectangularTexture(renderer, texture)
-      // scene.add(new THREE.HemisphereLight(0xffffff, 0x000000, 0.5))
+      // scene.background = new THREE.Color(0x222222);
+      // 纹理对象Texture赋值给场景对象的背景属性.background
+      // new THREE.WebGLRenderTargetCube()
+
+      // var textureEquirec = textureLoader.load( '../../public/img/backGround2.jpg' );
+      // textureEquirec.mapping = THREE.EquirectangularReflectionMapping;
+      // textureEquirec.encoding = THREE.sRGBEncoding;
+      // scene.background = new THREE.WebGLCubeRenderTarget( 1024, options ).fromEquirectangularTexture( renderer, textureEquirec );
 
 
-      // controls = new OrbitControls(camera, renderer.domElement);
-      // controls.target.set(0, 0, 0);
-      // controls.minDistance = 35;
-      // controls.maxDistance = 200;
+
+      controls = new OrbitControls(camera, renderer.domElement);
+      controls.target.set(0, 0, 0);
+      controls.minDistance = 1;
+      controls.maxDistance = 200;
       //
-      // controls.rotateSpeed = 1.0;
-      // controls.zoomSpeed = 1.2;
-      // controls.panSpeed = 0.8;
+      controls.rotateSpeed = 1.0;
+      controls.zoomSpeed = 1.2;
+      controls.panSpeed = 0.8;
 
 
-      // 创建几何体
-      geometry = new THREE.SphereGeometry(800, 100, 100)
-      // invert the geometry on the x-axis so that all of the faces point inward
-
-      geometry.scale(-1, 1, 1)
-      //
-      //
       this.initLoadMesh()
+
+
+      // 新增一个红色球
+      // const geometry = new THREE.SphereGeometry(1, 10, 10);
+      // const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+      // const mesh = new THREE.Mesh(geometry, material);
+      // scene.add(mesh);
+      // // 坐标轴辅助线
+      // scene.add(new THREE.AxisHelper(1000));
+      controls.update(); // 控制器需要
+      // controls.target.copy(mesh.position);
+
 
 
       let Ambient = new THREE.AmbientLight(0xFFFFFF, 0.5);
@@ -359,6 +373,8 @@ export default {
 
 
       this.initLoadOptions()
+
+
 
 
       setTimeout(() => {
@@ -412,7 +428,7 @@ export default {
         map: runnerTexture,
         side: THREE.DoubleSide,
         opacity: 1,
-        transparent: true
+        fog: true
       });
       var runnerGeometry = new THREE.PlaneGeometry(50, 50, 1, 1);
 
@@ -420,6 +436,18 @@ export default {
       let x = parseInt(split[0] - 0)
       let y = parseInt(split[1] - 0)
       let z = parseInt(split[2] - 0)
+      console.log(x,y,z)
+
+      var spriteMaterial = new THREE.SpriteMaterial({
+        map: runnerTexture,color: 0xffffff, fog: true
+      });
+      const sprite = new THREE.Sprite( spriteMaterial );
+
+      sprite.position.set( x, y, z );
+      sprite.position.normalize();
+      sprite.position.multiplyScalar( 15 );
+
+      scene.add(sprite)
 
 
       let runner = new THREE.Mesh(runnerGeometry, runnerMaterial);
@@ -432,8 +460,8 @@ export default {
         annie: new TextureAnimator(runnerTexture, 1, 25, 25, 160),
         runner: runner,
       }
-      this.lookAtCamera(runner)
-      scene.add(runner);
+      // this.lookAtCamera(runner)
+      // scene.add(runner);
 
       annies.push(a)// texture, #horiz, #vert, #total, duration.
 
@@ -478,6 +506,13 @@ export default {
       //   controls.panSpeed = 0.8;
       // }
 
+
+      // 创建几何体
+      geometry = new THREE.SphereGeometry(800, 100, 100)
+      // invert the geometry on the x-axis so that all of the faces point inward
+
+      geometry.scale(-1, 1, 1)
+
       if (this.showType === 1) {
         texture = new THREE.VideoTexture(this.video)
       } else {
@@ -515,16 +550,33 @@ export default {
     // 全景场景切换
     venueChange(index) {
       console.log(index)
-      // 重新调用
+      // 重新调用e
       // this.optionsTreeAll = this.venueList[index]
       // this.initLoadOptions()
     },
     // 全景图切换
     changeScene(index) {
       console.log()
-      texture = new THREE.TextureLoader().load('../../public/img/backGround' + index + '.jpg')
-      mesh.material.map = texture
-      console.log(mesh)
+      mesh.rotateX(Math.PI / 2)
+
+      texture = textureLoader.load('../../public/img/backGround' + index + '.jpg')
+      // mesh.material.map = texture
+      // console.log(mesh)
+      this.a = true
+
+      setTimeout(() => {
+
+        mesh.material.map = texture
+        console.log(mesh)
+        this.a = false
+        // mesh.up =
+        mesh.up = new THREE.Vector3(0, 1, 0)
+        mesh.setRotationFromQuaternion(new THREE.Quaternion(0, 1, 0, 1))
+
+
+      }, 500)
+
+
     },
     // 重绘
     animate() {
@@ -540,23 +592,33 @@ export default {
       })
       // controls.update()
 
-      this.lat = Math.max(-85, Math.min(85, this.lat))
-      this.phi = THREE.MathUtils.degToRad(90 - this.lat)
-      this.theta = THREE.MathUtils.degToRad(this.lon)
-      camera.position.x = 50 * Math.sin(this.phi) * Math.cos(this.theta)
-      camera.position.y = 50 * Math.cos(this.phi)
-      camera.position.z = 50 * Math.sin(this.phi) * Math.sin(this.theta)
-      camera.lookAt(camera.target)
-      camera.position.copy(camera.target).negate()
+      // this.lat = Math.max(-85, Math.min(85, this.lat))
+      // this.phi = THREE.MathUtils.degToRad(90 - this.lat)
+      // this.theta = THREE.MathUtils.degToRad(this.lon)
+      // camera.position.x = 50 * Math.sin(this.phi) * Math.cos(this.theta)
+      // camera.position.y = 50 * Math.cos(this.phi)
+      // camera.position.z = 50 * Math.sin(this.phi) * Math.sin(this.theta)
+      // camera.lookAt(camera.target)
+      // camera.position.copy(camera.target).negate()
 
       stats.update();
+
+      if(  this.a ) {
+        // const time = clock.get;
+
+        // mesh.rotation.y = Math.sin( time ) * 2;
+        // mesh.position.x = Math.sin( time ) * 2;
+        // mesh.rotation.y += 0.1;
+        mesh.rotation.x += 0.1;
+        // mesh.rotation.z += 0.1;
+
+      }
 
 
       this.update()
     },
     // 更新
     update() {
-      renderer.clear()
       renderer.render(scene, camera)
     },
     // 初传入物体 object 3d  旋转到 正对 相机
@@ -569,15 +631,6 @@ export default {
 
       thing.quaternion.rotateTowards(targetQuaternion, 0)
       thing.lookAt(camera.position)
-    },
-    chengeVrSource(videoUrl, showType) {
-      this.videoUrl = videoUrl
-      this.showType = showType
-      this.initLoadMesh()
-      setTimeout(() => {
-        if (this.showType === 1) this.video.play()
-        this.animate()
-      }, 20)
     },
     closeUpdate() {
       cancelAnimationFrame(this.rAfID)
