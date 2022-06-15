@@ -1,4 +1,6 @@
 import {createStore} from "vuex";
+import { getToken, setToken, removeToken } from '@/utils/auth'
+
 
 export  default createStore({
         state: {
@@ -8,6 +10,7 @@ export  default createStore({
             add(state){
                 state.counter++
             }
-        }
+        },
+       token: state => state.user.token,
     }
 )

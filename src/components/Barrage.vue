@@ -25,9 +25,7 @@ export default {
     return { buildText, buildList, sendBuild, listbox, times };
   },
   mounted() {
-    this.$h.post(`api/user/getToken`).then(res => {
-      console.log(res)
-    })
+
   }
 };
 function buildFan() {

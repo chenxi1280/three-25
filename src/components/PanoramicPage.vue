@@ -572,7 +572,8 @@ export default {
         // mesh.up =
         mesh.up = new THREE.Vector3(0, 1, 0)
         mesh.setRotationFromQuaternion(new THREE.Quaternion(0, 1, 0, 1))
-
+        camera.up= new THREE.Vector3(0, 1, 0)
+        camera.setRotationFromQuaternion(new THREE.Quaternion(0, 1, 0, 1))
 
       }, 500)
 
@@ -609,7 +610,7 @@ export default {
         // mesh.rotation.y = Math.sin( time ) * 2;
         // mesh.position.x = Math.sin( time ) * 2;
         // mesh.rotation.y += 0.1;
-        mesh.rotation.x += 0.1;
+        camera.rotation.z += 0.1;
         // mesh.rotation.z += 0.1;
 
       }

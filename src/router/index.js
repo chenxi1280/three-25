@@ -1,9 +1,21 @@
 import {createRouter, createWebHashHistory} from "vue-router";
 import Home from "@/views/Home.vue"
+import Login from "@/views/Login.vue"
+import TableView from "@/views/TableView.vue"
 const routes = [
     {
         path: '/',
         component:Home
+    },
+
+    {
+        path: '/table',
+        component:TableView
+    },
+
+    {
+        path: '/login',
+        component:Login
     },
 ]
 const router = createRouter({
