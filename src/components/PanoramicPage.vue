@@ -18,9 +18,13 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 
+import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js';
+
 // , controls, raycaster , light
-var container
+var container, mixer ,raycaster
 var camera, scene, renderer, texture,controls,stats,geometry
+
+var clock = new THREE.Clock()
 
 // var spriteTL, spriteTR, spriteBL, spriteBR, spriteC, sceneOrtho, cameraOrtho
 export default {
@@ -50,7 +54,11 @@ export default {
       onPointerDownPointerY: 0,
       onPointerDownLon: 0,
       onPointerDownPointerX: 0,
-      onPointerDownLat: 0
+      onPointerDownLat: 0,
+      mouse: {
+        x:0,
+        y:0
+      }
     }
   },
   watch: {
@@ -80,10 +88,18 @@ export default {
       container.appendChild(stats.dom);
 
 
-      renderer = new THREE.WebGLRenderer()
-      // renderer.setPixelRatio(window.devicePixelRatio)
-      renderer.setSize(window.innerWidth, window.innerHeight)
+      renderer = new THREE.WebGLRenderer( { antialias: true } );
+      renderer.setPixelRatio( window.devicePixelRatio );
+      renderer.setSize( window.innerWidth, window.innerHeight );
+      // renderer.toneMapping = THREE.LinearToneMapping;
+      renderer.toneMappingExposure = 1;
+      // renderer.shadowMap.enabled = true
+      // renderer.physicallyCorrectLights
+      // renderer.shadowMap.type =
+      renderer.outputEncoding = THREE.sRGBEncoding;
+      // renderer.shadowMap.enabled = true; // 渲染器
       container.appendChild(renderer.domElement)
+
 
       // 创建相机
 
@@ -92,145 +108,21 @@ export default {
 
       // 创建场景
       scene = new THREE.Scene()
-      scene.background = new THREE.Color(0x101010)
-
-      scene.add(new THREE.HemisphereLight(0xffffff, 0x000000, 0.5))
-
-      let  light = new THREE.DirectionalLight(0xffffff, 0.75)
-      light.position.set(0, 2.3, 0)
-      // camera.add(light);
-      light.visible = false
-      scene.add(light)
-      // 创建几何体
-      geometry = new THREE.SphereGeometry(50, 100, 100)
-      // invert the geometry on the x-axis so that all of the faces point inward
-      // geometry.position.set(0,0,0)
-      geometry.scale(1, 1, 1)
-      // let  shader = reflectMat
-      // let shaderObject = {
-      //   vertexShader: shader.vertexShader,
-      //   fragmentShader: shader.fragmentShader,
-      //   lights: true
-      // }
-      // // Add uniforms if present.
-      // if ('uniforms' in shader) {
-      //   // Using UniformUtils will clone the shader files uniforms,
-      //   shaderObject.uniforms = THREE.UniformsUtils.merge([
-      //     THREE.UniformsLib['lights'],
-      //     shader.uniforms
-      //   ])
-      // }
-      // // Set this new material on the mesh.
-      // let material = new THREE.ShaderMaterial(shaderObject)
-      // add the original uniforms here so we can loop over them in the Controls, because other uniforms are added thathttps://github.com/2pha/vue-three-shaders.git we don't want controls for.
-      // material.customUniforms = shader.uniforms
-
-      // const material = new THREE.MeshBasicMaterial({color: 0x00ff00})
-       let material = new MeshReflectorMaterial( renderer, camera,scene, geometry, {
-        dithering: true,
-        blur: [ 1000, 1000 ],
-        mixBlur: 30,
-        mixStrength: 80,
-        mixContrast: 1,
-        resolution: 1024,
-        mirror: 0,
-        depthScale: 0.01,
-        minDepthThreshold: 0.9,
-        maxDepthThreshold: 1,
-        depthToBlurRatioBias: 0.25,
-        debug: 0,
-        reflectorOffset: 0.2,
-      } );
-
-      // ground.material.setValues( {
-      //   envMapIntensity: 0,
-      //   color: new THREE.Color( 0.1, 0.1, 0.1 ),
-      //   roughnessMap: assets.roughnessMap,
-      //   normalMap: assets.normalMap,
-      // } )
-      const mesh = new THREE.Mesh(geometry, material)
-      mesh.position.set(0,0,-100)
-      scene.add(mesh)
-
-      this. initLoadMesh()
+      // scene.background = new THREE.Color(0x101010)
 
 
-      const geometry2 = new THREE.PlaneGeometry(200, 200);
-      const fragmentShader = `
-      #include <common>
 
-      uniform vec3 iResolution;
-      uniform float iTime;
-      uniform sampler2D iChannel0;
 
-      // By Daedelus: https://www.shadertoy.com/user/Daedelus
-      // license: Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License.
-      #define TIMESCALE 0.25
-      #define TILES 8
-      #define COLOR 0.7, 1.6, 2.8
 
-      void mainImage( out vec4 O, vec2 I)
-      {
-    //Resolution for scaling
-    vec2 r = iResolution.xy,
-    //Rotated coordinates
-    c = mat2(9,1,-1,9) * (I+I-r),
-    //Iteration value
-    i = vec2(0,11),
-    //Temporary position variable for noise
-    p;
 
-    //Clear fragcolor
-    for(O-=O;
-    //Loop 200 times
-    i.x<2e2;
-    //Add DOF sample (noise texture, 4 octaves and sine coloring)
-    O += pow(sin(texture(iChannel0,p*exp2(mod(i,4.))/2e3)*3.+p.x*.4+vec4(0,2,3,0))*.5+.5,4.+O-O))
-        //Compute DOF sample coordinates
-        p = c+sin(i)*sqrt(i++).x*c.y/4e2,
-        //Correct for perspective and scroll
-        p = p/(r+r-p*.1).y+iTime;
 
-    //Fourth root for better coloring
-    O = sqrt(sqrt(O))*.3;
 
-      }
 
-      varying vec2 vUv;
-
-      void main() {
-        mainImage(gl_FragColor, vUv * iResolution.xy);
-      }
-      `;
-      const vertexShader = `
-      varying vec2 vUv;
-      void main() {
-        // vUv = uv;
-        gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
-      }
-      `;
-      let uniforms = {
-        iTime: { value: 0 },
-        iResolution:  { value: new THREE.Vector3() },
-        iChannel0: { value: texture },
-
-      }
-      const shader = new THREE.ShaderMaterial({
-        uniforms,
-        vertexShader,
-        fragmentShader
-      });
-      this.uniforms = uniforms
-      const plane = new THREE.Mesh(geometry2, shader);
-      plane.position.set(0,100,-100)
-      scene.add(plane);
-
-      let mixer
 
       let loader =  new GLTFLoader()
       loader.setDRACOLoader( new DRACOLoader().setDecoderPath( '../../public/gltf/' ) )
       loader.setPath( '../../public/model/' )
-          .load( 'quanjingcyy1.glb', function ( gltf ) {
+      loader.load( 'quanjingcyycombined.glb', function ( gltf ) {
             console.log(gltf )
             gltf.scene.scale.set(1, 1, 1)
             gltf.scene.position.set(0, 0, 0)
@@ -241,11 +133,42 @@ export default {
 
           } );
 
+      loader.load( 'test-51.glb', function ( gltf ) {
+        console.log(gltf )
+        gltf.scene.scale.set(0.01, 0.01, 0.01)
+        gltf.scene.position.set(12, 0, -5)
+        // gltf.scene.position.set(0, 10, -8.599)
+        mixer = new THREE.AnimationMixer( gltf.scene );
+        // mixer.timeScale = 4
+        mixer.clipAction( gltf.animations[ 0 ] ).play();
+        scene.add( gltf.scene );
+      } );
+
+      // TODO
+      var pmremGenerator = new THREE.PMREMGenerator(renderer)
+      pmremGenerator.compileEquirectangularShader()
+
+      let hdr = new RGBELoader()
+
+      hdr.load('../public/hdr/backHrd.hdr', (texture) => {
+        let envMap = pmremGenerator.fromEquirectangular(texture).texture
+        // scene.background = envMap
+        scene.environment = envMap
+
+      })
+
+      scene.add(new THREE.HemisphereLight(0xffffff, 0x000000, 0.5))
+      //
+
+
+
+      raycaster = new THREE.Raycaster()
+      raycaster.far = 5500
 
 
       // TODO 旋转摄像机
       controls = new OrbitControls(camera, renderer.domElement)
-      controls.target.set(0, 0, 0)
+      controls.target.set(10.963, 1.185, -8.599)
       controls.minDistance = 1
       controls.maxDistance = 800
 
@@ -258,19 +181,21 @@ export default {
 
       // this.initLoadMesh()
 
-      let Ambient = new THREE.AmbientLight(0xFFFFFF, 5);
-      scene.add(Ambient);
 
       // canvas事件绑定
       // renderer.domElement.onmousemove = this.canvasMouseMove
       // renderer.domElement.onmouseout = this.canvasMouseOut
-      // renderer.domElement.onmouseup = this.canvasMouseup
+      renderer.domElement.onmouseup = this.onMouseClick
       // renderer.domElement.onmousedown = this.canvasMouseDown
       // renderer.domElement.ontouchstart = this.canvasTouchstart
       // renderer.domElement.ontouchmove = this.canvasTouchmove
       // renderer.domElement.ontouchend = this.canvasTouchend
-
+      // renderer.domElement.on
       window.addEventListener('resize', this.onWindowResize)
+      let elementsByTagName = document.querySelector('canvas')
+      console.log(elementsByTagName)
+      // 点击事件
+      elementsByTagName.addEventListener('click', this.onMouseClick)
 
       this.rAfID = requestAnimationFrame(
           this.animate
@@ -284,11 +209,7 @@ export default {
       this.rAfID = requestAnimationFrame(
           this.animate
       )
-      time *= 0.001;  // convert to seconds
-      // resizeRendererToDisplaySize(renderer);
-      const canvas = renderer.domElement;
-      this.uniforms.iResolution.value.set(canvas.width, canvas.height, 1);
-      this.uniforms.iTime.value = time;
+
       this.update()
     },
     // 更新
@@ -297,6 +218,29 @@ export default {
       stats.update();
       // renderer.clear()
       renderer.render(scene, camera)
+    },
+
+    onMouseClick (event) {
+      console.log(11)
+      this.clickFlag = true
+      // 将鼠标位置归一化为设备坐标。x 和 y 方向的取值范围是 (-1 to +1)
+      event.preventDefault()
+      // 注意坐标
+      // console.log(event.clientX,event.clientY,window.innerWidth,window.innerHeight)
+      this.mouse.x = ((event.clientX) / (window.innerWidth)) * 2 - 1
+      this.mouse.y = -((event.clientY) / (window.innerHeight)) * 2 + 1
+      raycaster.setFromCamera(this.mouse, camera)// 更新射线
+
+      let intersects = raycaster.intersectObjects(scene.children, true) // 参数1：检测对象，参数2：是否检测该对象的children
+      // let intersects = raycaster.intersectObjects(this.optionsGroup.children, true); //参数1：检测对象，参数2：是否检测该对象的children
+      // intersects 与射线相交的模型
+      console.log('intersects', intersects,intersects[0].point)
+      camera.position.set(intersects[0].point.x,intersects[0].point.y,intersects[0].point.z)
+
+      intersects.forEach(value => {
+        if (value.object instanceof THREE.Sprite && value.object.visible) {
+        }
+      })
     },
     initLoadMesh() {
       // if (this.showType === 1) {
