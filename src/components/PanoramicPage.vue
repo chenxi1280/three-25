@@ -19,10 +19,11 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js';
+import {TWEEN}  from 'three/examples/jsm/libs/tween.module.min.js';
 
 // , controls, raycaster , light
 var container, mixer ,raycaster
-var camera, scene, renderer, texture,controls,stats,geometry
+var camera, scene, renderer, texture,controls,stats,geometry,imgMesh ,modelAnimation
 
 var clock = new THREE.Clock()
 
@@ -104,15 +105,34 @@ export default {
       // 创建相机
 
       camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000)
-      camera.position.set(0, 0, 60)
+      camera.target = new THREE.Vector3( 0, -2, 0 );
+      camera.position.set(0, 2, 5)
 
       // 创建场景
       scene = new THREE.Scene()
       // scene.background = new THREE.Color(0x101010)
 
 
-
-
+      let textureLoader = new THREE.TextureLoader(  )
+      textureLoader.load('../../public/img/play.png', (texture) => {
+        texture.mapping = THREE.UVMapping;
+        let geometry = new THREE.PlaneGeometry(0.5, 0.5, 4, 4);
+        let material = new THREE.MeshBasicMaterial({color: 0xffffff, map: texture});
+        material.transparent = true;//是否透明
+        material.opacity = 1;//透明度
+        imgMesh = new THREE.Mesh(geometry, material);
+        imgMesh.position.x = 12
+        imgMesh.position.y = 0.8 ;
+        imgMesh.position.z = -4
+        imgMesh.scale.x = imgMesh.scale.y = imgMesh.scale.z = 1;
+        imgMesh.name =  'play'
+        // imgMesh.visible = visible
+        // if ( visible ){
+        //   optionsGroup.add(imgMesh)
+        // }else {
+        scene.add(imgMesh);
+        // }
+      });
 
 
 
@@ -125,7 +145,7 @@ export default {
       loader.load( 'quanjingcyycombined.glb', function ( gltf ) {
             console.log(gltf )
             gltf.scene.scale.set(1, 1, 1)
-            gltf.scene.position.set(0, 0, 0)
+            gltf.scene.position.set(0,0 , 0)
             // mixer = new THREE.AnimationMixer( gltf.scene );
             // mixer.timeScale = 4
             // mixer.clipAction( gltf.animations[ 0 ] ).play();
@@ -140,7 +160,8 @@ export default {
         // gltf.scene.position.set(0, 10, -8.599)
         mixer = new THREE.AnimationMixer( gltf.scene );
         // mixer.timeScale = 4
-        mixer.clipAction( gltf.animations[ 0 ] ).play();
+        modelAnimation =  mixer.clipAction( gltf.animations[ 0 ] )
+
         scene.add( gltf.scene );
       } );
 
@@ -159,6 +180,17 @@ export default {
 
       scene.add(new THREE.HemisphereLight(0xffffff, 0x000000, 0.5))
       //
+      let geometryPlane = new THREE.PlaneGeometry(25,25)
+      let materialPlane = new THREE.MeshBasicMaterial( {color: 0xffff00, side: THREE.DoubleSide} );
+      const plane = new THREE.Mesh( geometryPlane, materialPlane );
+      plane.position.y = 1
+      plane.position.x = 5
+      plane.position.z = -1
+      plane.rotateX( -Math.PI/2 )
+      plane.name = 'ground'
+      // plane.visible = false
+      scene.add( plane );
+
 
 
 
@@ -167,29 +199,33 @@ export default {
 
 
       // TODO 旋转摄像机
-      controls = new OrbitControls(camera, renderer.domElement)
-      controls.target.set(10.963, 1.185, -8.599)
-      controls.minDistance = 1
-      controls.maxDistance = 800
-
-      controls.rotateSpeed = 1.0
-      controls.zoomSpeed = 1.2
-      controls.panSpeed = 0.8
-
-      controls.enableDamping = true; // an animation loop is required when either damping or auto-rotation are enabled
-      controls.dampingFactor = 0.05;
+      // controls = new OrbitControls(camera, renderer.domElement)
+      // controls.target.set(10.963, 1.185, -8.599)
+      // controls.minDistance = 1
+      // controls.maxDistance = 800
+      // // controls.enableRotate = true
+      // controls.rotateSpeed = 1.0
+      // controls.zoomSpeed = 1.2
+      // controls.panSpeed = 0.8
+      //
+      // controls.enableDamping = true; // an animation loop is required when either damping or auto-rotation are enabled
+      // controls.dampingFactor = 0.05;
 
       // this.initLoadMesh()
 
 
       // canvas事件绑定
-      // renderer.domElement.onmousemove = this.canvasMouseMove
-      // renderer.domElement.onmouseout = this.canvasMouseOut
-      renderer.domElement.onmouseup = this.onMouseClick
-      // renderer.domElement.onmousedown = this.canvasMouseDown
-      // renderer.domElement.ontouchstart = this.canvasTouchstart
-      // renderer.domElement.ontouchmove = this.canvasTouchmove
-      // renderer.domElement.ontouchend = this.canvasTouchend
+      renderer.domElement.onmousemove = this.canvasMouseMove
+      renderer.domElement.onmouseout = this.canvasMouseOut
+      renderer.domElement.onmouseup = this.canvasMouseup
+
+      renderer.domElement.onmousedown = this.canvasMouseDown
+      renderer.domElement.ontouchstart = this.canvasTouchstart
+      renderer.domElement.ontouchmove = this.canvasTouchmove
+      renderer.domElement.ontouchend = this.canvasTouchend
+
+      renderer.domElement.onclick = this.onMouseClick
+
       // renderer.domElement.on
       window.addEventListener('resize', this.onWindowResize)
       let elementsByTagName = document.querySelector('canvas')
@@ -206,15 +242,33 @@ export default {
     animate(time) {
       // console.log(time)
 
+      this.lat = Math.max(-85, Math.min(85, this.lat))
+      this.phi = THREE.MathUtils.degToRad(90 - this.lat)
+      this.theta = THREE.MathUtils.degToRad(this.lon)
+      camera.position.x = 50 * Math.sin(this.phi) * Math.cos(this.theta)
+      camera.position.y = 50 * Math.cos(this.phi)
+      camera.position.z = 50 * Math.sin(this.phi) * Math.sin(this.theta)
+      // camera.lookAt(camera.target)
+      // camera.position.copy(camera.target).negate()
+
+
       this.rAfID = requestAnimationFrame(
           this.animate
       )
+      if (TWEEN) {
+        TWEEN.update()
+      }
+      const delta = clock.getDelta();
+      if ( mixer) {
+        mixer.update( delta );
+
+      }
 
       this.update()
     },
     // 更新
     update() {
-      controls.update()
+      // controls.update()
       stats.update();
       // renderer.clear()
       renderer.render(scene, camera)
@@ -234,66 +288,112 @@ export default {
       let intersects = raycaster.intersectObjects(scene.children, true) // 参数1：检测对象，参数2：是否检测该对象的children
       // let intersects = raycaster.intersectObjects(this.optionsGroup.children, true); //参数1：检测对象，参数2：是否检测该对象的children
       // intersects 与射线相交的模型
-      console.log('intersects', intersects,intersects[0].point)
-      camera.position.set(intersects[0].point.x,intersects[0].point.y,intersects[0].point.z)
+      console.log('intersects', intersects,intersects[0],camera)
+      if ( intersects.length ) {
+        let v = intersects[0].object
+        // && !v.visible
+        if (v instanceof THREE.Mesh  &&v.name === 'ground') {
+          console.log(111,'移动')
+          // camera.position.set(intersects[0].point.x,intersects[0].point.y,intersects[0].point.z)
+
+          // this.animateCamera(camera.position,  intersects[0].point ,controls.target, intersects[0].point, () => {
+          // })
+          intersects[0].point.y = intersects[0].point.y+0.2
+          // camera.target = intersects[0].point
+          this.animateCamera2(camera.position,intersects[0].point, () => {
+            camera.target = intersects[0].point
+            camera.target.y = -intersects[0].point.y
+          })
+        }else if ( v.name === 'play') {
+          imgMesh.visible = false
+          modelAnimation.play()
+        }
+
+      }
 
       intersects.forEach(value => {
         if (value.object instanceof THREE.Sprite && value.object.visible) {
         }
       })
     },
-    initLoadMesh() {
-      // if (this.showType === 1) {
-      //   console.log(this.video)
-      //   texture = new THREE.VideoTexture(this.video)
-      //   // 组成物体
-      //   const material = new THREE.MeshBasicMaterial({map: texture})
-      //   const mesh = new THREE.Mesh(this.geometry, material)
-      //   mesh.position.set(0, 0, 0)
-      //   scene.add(mesh)
-      // } else {
-      //
-      //   let  textureLoader = new THREE.TextureLoader();
-      //   textureLoader.load( '../../public/img//backGround2.jpg',  ( texture ) =>  {
-      //     texture.mapping = THREE.UVMapping;
-      //     const options = {
-      //       generateMipmaps: true,
-      //       minFilter: THREE.LinearMipmapLinearFilter,
-      //       magFilter: THREE.LinearFilter
-      //     };
-      //     scene.background = new THREE.WebGLCubeRenderTarget( 1024, options ).fromEquirectangularTexture( renderer, texture );
-      //   } );
-      //
-      //   controls = new OrbitControls(camera, renderer.domElement);
-      //   controls.target.set(0, -5, 0);
-      //   controls.minDistance = 35;
-      //   controls.maxDistance = 200;
-      //
-      //   controls.rotateSpeed = 1.0;
-      //   controls.zoomSpeed = 1.2;
-      //   controls.panSpeed = 0.8;
-      // }
-
-      if (this.showType === 1) {
-        texture = new THREE.VideoTexture(this.video)
-      } else {
-        texture = new THREE.TextureLoader().load(this.videoUrl)
+    // current1 相机当前的位置
+    // target1 相机的目标位置
+    // current2 当前的controls的target
+    // target2 新的controls的target
+    animateCamera (current1, target1, current2,    target2, onLoaded) {
+      // camera.lookAt(0, 0, 0)
+      let positionVar = {
+        x1: current1.x,
+        y1: current1.y,
+        z1: current1.z,
+        x2: current2.x,
+        y2: current2.y,
+        z2: current2.z
       }
-      // 组成物体
-      const material = new THREE.MeshBasicMaterial({ map: texture })
-      const mesh = new THREE.Mesh(geometry, material)
-      scene.add(mesh)
-      mesh.position.set(0, 0, 0)
+      // 关闭控制器
+      controls.enabled = false;
+      console.log(TWEEN)
+      // camera.setRotationFromQuaternion(new THREE.Quaternion(0, 0, 0, 1))
+      var tween = new TWEEN.Tween(positionVar)
+      console.log(tween)
+      tween.to({
+        x1: target1.x,
+        y1: target1.y,
+        z1: target1.z,
+      }, 1000)
+      tween.onUpdate(() => {
+        // camera.lookAt(target2)
+        camera.position.x = positionVar.x1
+        camera.position.y = positionVar.y1
+        camera.position.z = positionVar.z1
+
+      })
+      tween.start()
+      tween.onComplete(() => {
+        console.log(111)
+        // camera.setRotationFromQuaternion(new THREE.Quaternion(0, 0, 0, 1))
+        // controls.target.x = target2.x
+        // controls.target.y = target2.y
+        // controls.target.z = target2.z
+        controls.enabled = true
+
+
+        onLoaded()
+      })
+      tween.easing(TWEEN.Easing.Sinusoidal.InOut)
     },
 
-    chengeVrSource(videoUrl, showType) {
-      this.videoUrl = videoUrl
-      this.showType = showType
-      this.initLoadMesh()
-      setTimeout(() => {
-        if (this.showType === 1) this.video.play()
-        this.animate()
-      }, 20)
+    animateCamera2 (current1,  target1, onLoaded) {
+      // camera.lookAt(0, 0, 0)
+      // camera.up = new THREE.Vector3(0, 1, 0)
+      let positionVar = {
+        x: current1.x,
+        y: current1.y,
+        z: current1.z,
+      }
+      // 关闭控制器
+      console.log(TWEEN)
+      // camera.setRotationFromQuaternion(new THREE.Quaternion(0, 0, 0, 1))
+      var tween = new TWEEN.Tween(positionVar)
+      console.log(tween)
+      tween.to({
+        x: target1.x,
+        y: target1.y,
+        z: target1.z
+      }, 1000)
+      tween.onUpdate(() => {
+        // camera.lookAt(target2)
+        camera.position.x = positionVar.x
+        camera.position.y = positionVar.y
+        camera.position.z = positionVar.z
+      })
+      tween.start()
+      tween.onComplete(() => {
+        console.log(111)
+        // camera.setRotationFromQuaternion(new THREE.Quaternion(0, 0, 0, 1))
+        onLoaded()
+      })
+      tween.easing(TWEEN.Easing.Sinusoidal.InOut)
     },
     closeUpdate() {
       cancelAnimationFrame(this.rAfID)
