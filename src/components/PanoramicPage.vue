@@ -21,6 +21,7 @@ import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js';
 import {TWEEN}  from 'three/examples/jsm/libs/tween.module.min.js';
 
+import {FirstPersonControls} from 'three/examples/jsm/controls/FirstPersonControls.js'
 // , controls, raycaster , light
 var container, mixer ,raycaster
 var camera, scene, renderer, texture,controls,stats,geometry,imgMesh ,modelAnimation
@@ -105,8 +106,8 @@ export default {
       // 创建相机
 
       camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000)
-      camera.target = new THREE.Vector3( 0, -2, 0 );
-      camera.position.set(0, 2, 5)
+      camera.target = new THREE.Vector3( 0, -1.5, 0 );
+      camera.position.set(0, 1.5, 0)
 
       // 创建场景
       scene = new THREE.Scene()
@@ -120,11 +121,13 @@ export default {
         let material = new THREE.MeshBasicMaterial({color: 0xffffff, map: texture});
         material.transparent = true;//是否透明
         material.opacity = 1;//透明度
+
         imgMesh = new THREE.Mesh(geometry, material);
-        imgMesh.position.x = 12
+        imgMesh.position.x = 11
         imgMesh.position.y = 0.8 ;
-        imgMesh.position.z = -4
+        imgMesh.position.z = -5
         imgMesh.scale.x = imgMesh.scale.y = imgMesh.scale.z = 1;
+        imgMesh.rotateY(-Math.PI/2 )
         imgMesh.name =  'play'
         // imgMesh.visible = visible
         // if ( visible ){
@@ -157,6 +160,7 @@ export default {
         console.log(gltf )
         gltf.scene.scale.set(0.01, 0.01, 0.01)
         gltf.scene.position.set(12, 0, -5)
+        gltf.scene.rotateY( - Math.PI / 2)
         // gltf.scene.position.set(0, 10, -8.599)
         mixer = new THREE.AnimationMixer( gltf.scene );
         // mixer.timeScale = 4
@@ -183,12 +187,12 @@ export default {
       let geometryPlane = new THREE.PlaneGeometry(25,25)
       let materialPlane = new THREE.MeshBasicMaterial( {color: 0xffff00, side: THREE.DoubleSide} );
       const plane = new THREE.Mesh( geometryPlane, materialPlane );
-      plane.position.y = 1
+      plane.position.y = 0.2
       plane.position.x = 5
       plane.position.z = -1
       plane.rotateX( -Math.PI/2 )
       plane.name = 'ground'
-      // plane.visible = false
+      plane.visible = false
       scene.add( plane );
 
 
@@ -211,8 +215,11 @@ export default {
       // controls.enableDamping = true; // an animation loop is required when either damping or auto-rotation are enabled
       // controls.dampingFactor = 0.05;
 
-      // this.initLoadMesh()
 
+
+      // controls = new FirstPersonControls( camera, renderer.domElement );
+      // controls.movementSpeed = 150;
+      // controls.lookSpeed = 1;
 
       // canvas事件绑定
       renderer.domElement.onmousemove = this.canvasMouseMove
@@ -242,14 +249,20 @@ export default {
     animate(time) {
       // console.log(time)
 
-      this.lat = Math.max(-85, Math.min(85, this.lat))
-      this.phi = THREE.MathUtils.degToRad(90 - this.lat)
-      this.theta = THREE.MathUtils.degToRad(this.lon)
-      camera.position.x = 50 * Math.sin(this.phi) * Math.cos(this.theta)
-      camera.position.y = 50 * Math.cos(this.phi)
-      camera.position.z = 50 * Math.sin(this.phi) * Math.sin(this.theta)
-      // camera.lookAt(camera.target)
-      // camera.position.copy(camera.target).negate()
+      if ( controls ) {
+        controls.update(clock.getDelta())
+      }else {
+        this.lat = Math.max(-85, Math.min(85, this.lat))
+        this.phi = THREE.MathUtils.degToRad(90 - this.lat)
+        this.theta = THREE.MathUtils.degToRad(this.lon)
+        camera.position.x = 50 * Math.sin(this.phi) * Math.cos(this.theta)
+        camera.position.y = 50 * Math.cos(this.phi)
+        camera.position.z = 50 * Math.sin(this.phi) * Math.sin(this.theta)
+
+        camera.lookAt(camera.target)
+        camera.position.copy(camera.target).negate()
+      }
+
 
 
       this.rAfID = requestAnimationFrame(
@@ -268,7 +281,6 @@ export default {
     },
     // 更新
     update() {
-      // controls.update()
       stats.update();
       // renderer.clear()
       renderer.render(scene, camera)
@@ -288,7 +300,7 @@ export default {
       let intersects = raycaster.intersectObjects(scene.children, true) // 参数1：检测对象，参数2：是否检测该对象的children
       // let intersects = raycaster.intersectObjects(this.optionsGroup.children, true); //参数1：检测对象，参数2：是否检测该对象的children
       // intersects 与射线相交的模型
-      console.log('intersects', intersects,intersects[0],camera)
+      // console.log('intersects', intersects,intersects[0],camera)
       if ( intersects.length ) {
         let v = intersects[0].object
         // && !v.visible
@@ -298,11 +310,10 @@ export default {
 
           // this.animateCamera(camera.position,  intersects[0].point ,controls.target, intersects[0].point, () => {
           // })
-          intersects[0].point.y = intersects[0].point.y+0.2
+          intersects[0].point.y = intersects[0].point.y+ 1.5
           // camera.target = intersects[0].point
           this.animateCamera2(camera.position,intersects[0].point, () => {
-            camera.target = intersects[0].point
-            camera.target.y = -intersects[0].point.y
+            camera.target = intersects[0].point.negate()
           })
         }else if ( v.name === 'play') {
           imgMesh.visible = false
